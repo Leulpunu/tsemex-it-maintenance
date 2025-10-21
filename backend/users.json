@@ -1,0 +1,23 @@
+[
+  {
+    "id": 1760965340692,
+    "username": "leul",
+    "password": "$2b$10$AcLh.zovpGOL1J9lJ.P4TuZQcZMw9uk1WdGgHQohK1hIS3iai0r3u",
+    "email": "porericethio1@gmail.com",
+    "role": "admin"
+  },
+  {
+    "id": 1761025202508,
+    "username": "selam ",
+    "password": "$2b$10$Eh3EUInt7QRXpwPRZavRvulMrMCwON2QAwaFfBEYA7Jj4TFMSOuL2",
+    "email": "selam@gmail.com",
+    "role": "user"
+  },
+  {
+    "id": 1761031638719,
+    "username": "dave",
+    "password": "$2b$10$qBGGJMlQD94IX1hwHJoIW.YEfaCBqEPIInqu0LzpQzuDUBb.Cxli.",
+    "email": "dave@gmail.com",
+    "role": "user"
+  }
+]

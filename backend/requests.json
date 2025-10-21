@@ -1,0 +1,42 @@
+[
+  {
+    "id": 1760965668800,
+    "userId": 1760965340692,
+    "title": "isssus",
+    "description": "software problem",
+    "priority": "high",
+    "category": "software",
+    "status": "Submitted",
+    "createdAt": "2025-10-20T13:07:48.800Z"
+  },
+  {
+    "id": 1760968495393,
+    "userId": 1760965340692,
+    "title": "finance printer support",
+    "description": "printer toner losess",
+    "priority": "urgent",
+    "category": "hardware",
+    "status": "completed",
+    "createdAt": "2025-10-20T13:54:55.393Z"
+  },
+  {
+    "id": 1761025279709,
+    "userId": 1761025202508,
+    "title": "HR copier ",
+    "description": "it can't copy well",
+    "priority": "urgent",
+    "category": "hardware",
+    "status": "completed",
+    "createdAt": "2025-10-21T05:41:19.709Z"
+  },
+  {
+    "id": 1761031759307,
+    "userId": 1761031638719,
+    "title": "marketing dept. computer ",
+    "description": " mother bored won't start ",
+    "priority": "high",
+    "category": "hardware",
+    "status": "completed",
+    "createdAt": "2025-10-21T07:29:19.307Z"
+  }
+]
