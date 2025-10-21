@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 const DashboardContainer = styled.div`
   max-width: 1200px;
@@ -55,6 +56,7 @@ const StatusBadge = styled.span`
 `;
 
 function Dashboard({ user }) {
+  const { t } = useTranslation();
   const [requests, setRequests] = useState([]);
 
   useEffect(() => {
@@ -82,39 +84,44 @@ function Dashboard({ user }) {
   return (
     <DashboardContainer>
       <Header>
-        <h2>My IT Maintenance Requests</h2>
+        <h2>{t('dashboard.title')}</h2>
         <div>
           <Link to="/request">
-            <Button>New Request</Button>
+            <Button>{t('dashboard.newRequest')}</Button>
           </Link>
           {user.role === 'admin' && (
             <Link to="/admin">
-              <Button>Admin Panel</Button>
+              <Button>{t('dashboard.adminPanel')}</Button>
+            </Link>
+          )}
+          {(user.role === 'admin' || user.role === 'manager') && (
+            <Link to="/reports">
+              <Button>{t('dashboard.reports')}</Button>
             </Link>
           )}
         </div>
       </Header>
 
       {requests.length === 0 ? (
-        <p>No requests found. <Link to="/request">Create your first request</Link></p>
+        <p>{t('dashboard.noRequests')}</p>
       ) : (
         requests.map(request => (
           <RequestCard key={request.id}>
             <h3>{request.title}</h3>
             <p>{request.description}</p>
-            <p><strong>Priority:</strong> {request.priority}</p>
-            <p><strong>Category:</strong> {request.category}</p>
-            <p><strong>Department:</strong> {request.department}</p>
-            <p><strong>Status:</strong> <StatusBadge status={request.status}>{request.status}</StatusBadge></p>
-            <p><strong>Created:</strong> {new Date(request.createdAt).toLocaleDateString()}</p>
+            <p><strong>{t('dashboard.priority')}:</strong> {request.priority}</p>
+            <p><strong>{t('dashboard.category')}:</strong> {request.category}</p>
+            <p><strong>{t('dashboard.department')}:</strong> {request.department}</p>
+            <p><strong>{t('dashboard.status')}:</strong> <StatusBadge status={request.status}>{request.status}</StatusBadge></p>
+            <p><strong>{t('dashboard.created')}:</strong> {new Date(request.createdAt).toLocaleDateString()}</p>
             {user.role === 'admin' && request.status === 'pending' && (
               <div>
-                <Button onClick={() => updateStatus(request.id, 'in-progress')}>Start Work</Button>
-                <Button onClick={() => updateStatus(request.id, 'rejected')}>Reject</Button>
+                <Button onClick={() => updateStatus(request.id, 'in-progress')}>{t('dashboard.startWork')}</Button>
+                <Button onClick={() => updateStatus(request.id, 'rejected')}>{t('dashboard.reject')}</Button>
               </div>
             )}
             {user.role === 'admin' && request.status === 'in-progress' && (
-              <Button onClick={() => updateStatus(request.id, 'completed')}>Mark Complete</Button>
+              <Button onClick={() => updateStatus(request.id, 'completed')}>{t('dashboard.markComplete')}</Button>
             )}
           </RequestCard>
         ))

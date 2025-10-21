@@ -45,6 +45,12 @@ const isAdmin = (req, res, next) => {
   next();
 };
 
+// Middleware to check manager or admin role
+const isManagerOrAdmin = (req, res, next) => {
+  if (req.user.role !== 'admin' && req.user.role !== 'manager') return res.status(403).json({ message: 'Manager or Admin access required' });
+  next();
+};
+
 // Auth routes
 app.post('/api/auth/signup', async (req, res) => {
   const { username, password, email, role = 'user' } = req.body;
@@ -139,6 +145,73 @@ app.put('/api/admin/requests/:id', verifyToken, isAdmin, (req, res) => {
   request.status = status;
   writeData(requestsFile, requests);
   res.json(request);
+});
+
+// Reports routes (accessible by manager and admin)
+app.get('/api/reports/:period', verifyToken, isManagerOrAdmin, (req, res) => {
+  const { period } = req.params; // daily, weekly, monthly, annual
+  const requests = readData(requestsFile);
+  const users = readData(usersFile);
+  const now = new Date();
+  let startDate;
+
+  switch (period) {
+    case 'daily':
+      startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      break;
+    case 'weekly':
+      const dayOfWeek = now.getDay();
+      startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate() - dayOfWeek);
+      break;
+    case 'monthly':
+      startDate = new Date(now.getFullYear(), now.getMonth(), 1);
+      break;
+    case 'annual':
+      startDate = new Date(now.getFullYear(), 0, 1);
+      break;
+    default:
+      return res.status(400).json({ message: 'Invalid period' });
+  }
+
+  const filteredRequests = requests.filter(request => {
+    const requestDate = new Date(request.createdAt);
+    return requestDate >= startDate;
+  });
+
+  const requestsWithUsers = filteredRequests.map(request => ({
+    ...request,
+    user: users.find(u => u.id === request.userId)
+  }));
+
+  // Generate summary statistics
+  const summary = {
+    totalRequests: requestsWithUsers.length,
+    pending: requestsWithUsers.filter(r => r.status === 'pending').length,
+    inProgress: requestsWithUsers.filter(r => r.status === 'in-progress').length,
+    completed: requestsWithUsers.filter(r => r.status === 'completed').length,
+    rejected: requestsWithUsers.filter(r => r.status === 'rejected').length,
+    byPriority: {
+      low: requestsWithUsers.filter(r => r.priority === 'low').length,
+      medium: requestsWithUsers.filter(r => r.priority === 'medium').length,
+      high: requestsWithUsers.filter(r => r.priority === 'high').length,
+      urgent: requestsWithUsers.filter(r => r.priority === 'urgent').length,
+    },
+    byCategory: {
+      hardware: requestsWithUsers.filter(r => r.category === 'hardware').length,
+      software: requestsWithUsers.filter(r => r.category === 'software').length,
+      network: requestsWithUsers.filter(r => r.category === 'network').length,
+      account: requestsWithUsers.filter(r => r.category === 'account').length,
+      other: requestsWithUsers.filter(r => r.category === 'other').length,
+    }
+  };
+
+  res.json({
+    period,
+    startDate: startDate.toISOString(),
+    endDate: now.toISOString(),
+    summary,
+    requests: requestsWithUsers
+  });
 });
 
 app.listen(PORT, () => {

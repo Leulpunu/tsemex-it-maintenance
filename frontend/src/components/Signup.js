@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import axios from 'axios';
+import { useTranslation } from 'react-i18next';
 
 const FormContainer = styled.div`
   max-width: 400px;
@@ -64,6 +65,7 @@ const ErrorMessage = styled.p`
 `;
 
 function Signup({ onSignup }) {
+  const { t } = useTranslation();
   const [formData, setFormData] = useState({
     username: '',
     email: '',
@@ -91,13 +93,13 @@ function Signup({ onSignup }) {
 
   return (
     <FormContainer>
-      <h2>Sign Up</h2>
+      <h2>{t('signup.title')}</h2>
       {error && <ErrorMessage>{error}</ErrorMessage>}
       <Form onSubmit={handleSubmit}>
         <Input
           type="text"
           name="username"
-          placeholder="Username"
+          placeholder={t('signup.username')}
           value={formData.username}
           onChange={handleChange}
           required
@@ -105,7 +107,7 @@ function Signup({ onSignup }) {
         <Input
           type="email"
           name="email"
-          placeholder="Email"
+          placeholder={t('signup.email')}
           value={formData.email}
           onChange={handleChange}
           required
@@ -113,18 +115,19 @@ function Signup({ onSignup }) {
         <Input
           type="password"
           name="password"
-          placeholder="Password"
+          placeholder={t('signup.password')}
           value={formData.password}
           onChange={handleChange}
           required
         />
         <Select name="role" value={formData.role} onChange={handleChange}>
-          <option value="user">User</option>
-          <option value="admin">Admin</option>
+          <option value="user">{t('signup.user')}</option>
+          <option value="admin">{t('signup.admin')}</option>
+          <option value="manager">{t('signup.manager')}</option>
         </Select>
-        <Button type="submit">Sign Up</Button>
+        <Button type="submit">{t('signup.signupButton')}</Button>
       </Form>
-      <p>Already have an account? <Link href="/login">Login</Link></p>
+      <p>{t('signup.haveAccount')} <Link href="/login">{t('signup.loginLink')}</Link></p>
     </FormContainer>
   );
 }

@@ -38,5 +38,16 @@
     "category": "hardware",
     "status": "completed",
     "createdAt": "2025-10-21T07:29:19.307Z"
+  },
+  {
+    "id": 1761051784740,
+    "userId": 1761031638719,
+    "title": "network ",
+    "description": "the network won't work ",
+    "priority": "high",
+    "category": "network",
+    "department": "finance",
+    "status": "completed",
+    "createdAt": "2025-10-21T13:03:04.740Z"
   }
 ]

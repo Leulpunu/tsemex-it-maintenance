@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 const FormContainer = styled.div`
   max-width: 600px;
@@ -47,15 +48,25 @@ const Select = styled.select`
 `;
 
 const Button = styled.button`
-  padding: 0.5rem;
   background-color: ${props => props.theme.primary};
   color: white;
   border: none;
+  padding: 0.5rem 1rem;
   border-radius: 4px;
   cursor: pointer;
   margin-bottom: 1rem;
 
   &:hover {
+    background-color: ${props => props.theme.accent};
+  }
+`;
+
+const BackButton = styled(Button)`
+  background-color: ${props => props.theme.secondary};
+  margin-right: 1rem;
+
+  &:hover {
+    background-color: ${props => props.theme.secondary};
     opacity: 0.9;
   }
 `;
@@ -71,6 +82,7 @@ const SuccessMessage = styled.p`
 `;
 
 function RequestForm({ user }) {
+  const { t } = useTranslation();
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -93,7 +105,7 @@ function RequestForm({ user }) {
     e.preventDefault();
     try {
       await axios.post('http://localhost:5000/api/requests', formData);
-      setSuccess('Request submitted successfully!');
+      setSuccess(t('requestForm.successMessage'));
       setFormData({
         title: '',
         description: '',
@@ -103,53 +115,54 @@ function RequestForm({ user }) {
       });
       setTimeout(() => navigate('/dashboard'), 2000);
     } catch (err) {
-      setError(err.response?.data?.message || 'Failed to submit request');
+      setError(err.response?.data?.message || t('requestForm.errorMessage'));
     }
   };
 
   return (
     <FormContainer>
-      <h2>Submit IT Maintenance Request</h2>
+      <BackButton onClick={() => navigate('/dashboard')}>{t('common.backToDashboard')}</BackButton>
+      <h2>{t('requestForm.title')}</h2>
       {error && <ErrorMessage>{error}</ErrorMessage>}
       {success && <SuccessMessage>{success}</SuccessMessage>}
       <Form onSubmit={handleSubmit}>
         <Input
           type="text"
           name="title"
-          placeholder="Request Title"
+          placeholder={t('requestForm.titlePlaceholder')}
           value={formData.title}
           onChange={handleChange}
           required
         />
         <Textarea
           name="description"
-          placeholder="Describe your IT issue in detail"
+          placeholder={t('requestForm.descriptionPlaceholder')}
           value={formData.description}
           onChange={handleChange}
           required
         />
         <Select name="priority" value={formData.priority} onChange={handleChange}>
-          <option value="low">Low Priority</option>
-          <option value="medium">Medium Priority</option>
-          <option value="high">High Priority</option>
-          <option value="urgent">Urgent</option>
+          <option value="low">{t('requestForm.lowPriority')}</option>
+          <option value="medium">{t('requestForm.mediumPriority')}</option>
+          <option value="high">{t('requestForm.highPriority')}</option>
+          <option value="urgent">{t('requestForm.urgentPriority')}</option>
         </Select>
         <Select name="category" value={formData.category} onChange={handleChange}>
-          <option value="hardware">Hardware</option>
-          <option value="software">Software</option>
-          <option value="network">Network</option>
-          <option value="account">Account/Access</option>
-          <option value="other">Other</option>
+          <option value="hardware">{t('requestForm.hardware')}</option>
+          <option value="software">{t('requestForm.software')}</option>
+          <option value="network">{t('requestForm.network')}</option>
+          <option value="account">{t('requestForm.account')}</option>
+          <option value="other">{t('requestForm.other')}</option>
         </Select>
         <Input
           type="text"
           name="department"
-          placeholder="Your Department"
+          placeholder={t('requestForm.departmentPlaceholder')}
           value={formData.department}
           onChange={handleChange}
           required
         />
-        <Button type="submit">Submit Request</Button>
+        <Button type="submit">{t('requestForm.submitButton')}</Button>
       </Form>
     </FormContainer>
   );

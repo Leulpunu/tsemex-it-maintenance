@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import axios from 'axios';
+import { useTranslation } from 'react-i18next';
 
 const AdminContainer = styled.div`
   max-width: 1200px;
@@ -37,24 +38,40 @@ const StatusBadge = styled.span`
 `;
 
 const Button = styled.button`
-  padding: 0.5rem 1rem;
   background-color: ${props => props.theme.primary};
   color: white;
   border: none;
+  padding: 0.5rem 1rem;
   border-radius: 4px;
   cursor: pointer;
   margin-right: 0.5rem;
 
   &:hover {
+    background-color: ${props => props.theme.accent};
+  }
+`;
+
+const BackButton = styled(Button)`
+  background-color: ${props => props.theme.secondary};
+  margin-bottom: 1rem;
+
+  &:hover {
+    background-color: ${props => props.theme.secondary};
     opacity: 0.9;
   }
 `;
 
 const RejectButton = styled(Button)`
   background-color: ${props => props.theme.error};
+
+  &:hover {
+    background-color: ${props => props.theme.error};
+    opacity: 0.9;
+  }
 `;
 
 function AdminPanel() {
+  const { t } = useTranslation();
   const [requests, setRequests] = useState([]);
 
   useEffect(() => {
@@ -81,31 +98,32 @@ function AdminPanel() {
 
   return (
     <AdminContainer>
+      <BackButton onClick={() => window.history.back()}>{t('common.backToDashboard')}</BackButton>
       <Header>
-        <h2>Admin Panel - All IT Maintenance Requests</h2>
+        <h2>{t('adminPanel.title')}</h2>
       </Header>
 
       {requests.length === 0 ? (
-        <p>No requests found.</p>
+        <p>{t('adminPanel.noRequests')}</p>
       ) : (
         requests.map(request => (
           <RequestCard key={request.id}>
             <h3>{request.title}</h3>
-            <p><strong>User:</strong> {request.user.username} ({request.user.email})</p>
+            <p><strong>{t('adminPanel.user')}:</strong> {request.user.username} ({request.user.email})</p>
             <p>{request.description}</p>
-            <p><strong>Priority:</strong> {request.priority}</p>
-            <p><strong>Category:</strong> {request.category}</p>
-            <p><strong>Department:</strong> {request.department}</p>
-            <p><strong>Status:</strong> <StatusBadge status={request.status}>{request.status}</StatusBadge></p>
-            <p><strong>Created:</strong> {new Date(request.createdAt).toLocaleDateString()}</p>
+            <p><strong>{t('adminPanel.priority')}:</strong> {request.priority}</p>
+            <p><strong>{t('adminPanel.category')}:</strong> {request.category}</p>
+            <p><strong>{t('adminPanel.department')}:</strong> {request.department}</p>
+            <p><strong>{t('adminPanel.status')}:</strong> <StatusBadge status={request.status}>{request.status}</StatusBadge></p>
+            <p><strong>{t('adminPanel.created')}:</strong> {new Date(request.createdAt).toLocaleDateString()}</p>
             {request.status === 'pending' && (
               <div>
-                <Button onClick={() => updateStatus(request.id, 'in-progress')}>Start Work</Button>
-                <RejectButton onClick={() => updateStatus(request.id, 'rejected')}>Reject</RejectButton>
+                <Button onClick={() => updateStatus(request.id, 'in-progress')}>{t('adminPanel.startWork')}</Button>
+                <RejectButton onClick={() => updateStatus(request.id, 'rejected')}>{t('adminPanel.reject')}</RejectButton>
               </div>
             )}
             {request.status === 'in-progress' && (
-              <Button onClick={() => updateStatus(request.id, 'completed')}>Mark Complete</Button>
+              <Button onClick={() => updateStatus(request.id, 'completed')}>{t('adminPanel.markComplete')}</Button>
             )}
           </RequestCard>
         ))

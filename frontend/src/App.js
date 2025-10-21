@@ -2,11 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import styled, { ThemeProvider } from 'styled-components';
 import axios from 'axios';
+import { useTranslation } from 'react-i18next';
 import Login from './components/Login';
 import Signup from './components/Signup';
 import Dashboard from './components/Dashboard';
 import AdminPanel from './components/AdminPanel';
 import RequestForm from './components/RequestForm';
+import Reports from './components/Reports';
 import { lightTheme, darkTheme } from './themes';
 
 const AppContainer = styled.div`
@@ -51,11 +53,40 @@ const ThemeToggle = styled.button`
   cursor: pointer;
 `;
 
+const LanguageToggle = styled.button`
+  background-color: ${props => props.theme.primary};
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-left: 1rem;
+  &:hover {
+    background-color: ${props => props.theme.accent};
+  }
+`;
+
+
+
+const LogoutButton = styled.button`
+  background-color: ${props => props.theme.primary};
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-left: 1rem;
+  &:hover {
+    background-color: ${props => props.theme.accent};
+  }
+`;
+
 const Main = styled.main`
   padding: 2rem;
 `;
 
 function App() {
+  const { t, i18n } = useTranslation();
   const [user, setUser] = useState(null);
   const [theme, setTheme] = useState('light');
 
@@ -72,6 +103,10 @@ function App() {
 
   const toggleTheme = () => {
     setTheme(theme === 'light' ? 'dark' : 'light');
+  };
+
+  const toggleLanguage = () => {
+    i18n.changeLanguage(i18n.language === 'en' ? 'am' : 'en');
   };
 
   const login = (userData, token) => {
@@ -98,8 +133,11 @@ function App() {
             <div style={{ flex: 1 }}></div>
             {user && (
               <div>
-                <span>Welcome, {user.username}</span>
-                <button onClick={logout}>Logout</button>
+                <span>{t('common.welcome')}, {user.username}</span>
+                <LogoutButton onClick={logout}>{t('common.logout')}</LogoutButton>
+                <LanguageToggle onClick={toggleLanguage}>
+                  {i18n.language === 'en' ? 'አማርኛ' : 'English'}
+                </LanguageToggle>
                 <ThemeToggle onClick={toggleTheme}>
                   {theme === 'light' ? '🌙' : '☀️'}
                 </ThemeToggle>
@@ -112,6 +150,7 @@ function App() {
               <Route path="/signup" element={!user ? <Signup onSignup={login} /> : <Navigate to="/dashboard" />} />
               <Route path="/dashboard" element={user ? <Dashboard user={user} /> : <Navigate to="/login" />} />
               <Route path="/admin" element={user && user.role === 'admin' ? <AdminPanel /> : <Navigate to="/dashboard" />} />
+              <Route path="/reports" element={user && (user.role === 'admin' || user.role === 'manager') ? <Reports /> : <Navigate to="/dashboard" />} />
               <Route path="/request" element={user ? <RequestForm user={user} /> : <Navigate to="/login" />} />
               <Route path="/" element={<Navigate to={user ? "/dashboard" : "/login"} />} />
             </Routes>

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import axios from 'axios';
+import { useTranslation } from 'react-i18next';
 
 const FormContainer = styled.div`
   max-width: 400px;
@@ -55,6 +56,7 @@ const ErrorMessage = styled.p`
 `;
 
 function Login({ onLogin }) {
+  const { t } = useTranslation();
   const [formData, setFormData] = useState({
     username: '',
     password: ''
@@ -80,13 +82,13 @@ function Login({ onLogin }) {
 
   return (
     <FormContainer>
-      <h2>Login</h2>
+      <h2>{t('login.title')}</h2>
       {error && <ErrorMessage>{error}</ErrorMessage>}
       <Form onSubmit={handleSubmit}>
         <Input
           type="text"
           name="username"
-          placeholder="Username"
+          placeholder={t('login.username')}
           value={formData.username}
           onChange={handleChange}
           required
@@ -94,14 +96,14 @@ function Login({ onLogin }) {
         <Input
           type="password"
           name="password"
-          placeholder="Password"
+          placeholder={t('login.password')}
           value={formData.password}
           onChange={handleChange}
           required
         />
-        <Button type="submit">Login</Button>
+        <Button type="submit">{t('login.loginButton')}</Button>
       </Form>
-      <p>Don't have an account? <Link href="/signup">Sign up</Link></p>
+      <p>{t('login.noAccount')} <Link href="/signup">{t('login.signupLink')}</Link></p>
     </FormContainer>
   );
 }
